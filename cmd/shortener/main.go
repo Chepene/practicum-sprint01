@@ -1,3 +1,8 @@
 package main
 
-func main() {}
+func main() {
+
+	var t = 0;
+
+	fmt.Println(t);
+}
