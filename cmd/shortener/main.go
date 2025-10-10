@@ -39,14 +39,13 @@ func RandomString(n int) string {
 
 func createHandler(w http.ResponseWriter, r *http.Request) {
     
-	do {
-		var id = RandomString(8)
-
+	var id string
+	for {
+		id = RandomString(8)
 		if _, ok := links[id]; !ok {
 			break
 		}
-	} 
-	while (true)
+	}
 
 	var link = r.Body.ReadAll()
 	links[id] = link;
@@ -58,9 +57,10 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 
 func getByIdHandler(w http.ResponseWriter, r *http.Request) {
 
-	var id := r.PathValue(`id`)
+	var id = r.PathValue(`id`)
     
-	var link, ok := links[id] if !ok {
+	var link, ok = links[id]
+	if !ok {
 		w.WriteHeader(http.NotFound);
 		return;
 	}
