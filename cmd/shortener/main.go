@@ -5,6 +5,7 @@ import
 	"math/rand"
 	"time"
 	"net/http"
+	"io"
 )
 
 func main() {
@@ -47,11 +48,19 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var link = r.Body.ReadAll()
-	links[id] = link;
+	
+    body, err := io.ReadAll(r.Body)
 
-    r.WriteHeader(http.StatusCreated);
-	w.Write("http://localhost:8080/" + id)
+	defer r.Body.Close()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	
+	links[id] = string(body);
+
+    w.WriteHeader(http.StatusCreated);
+	w.Write([]byte("http://localhost:8080/" + id))
 
 }
 
@@ -61,10 +70,10 @@ func getByIdHandler(w http.ResponseWriter, r *http.Request) {
     
 	var link, ok = links[id]
 	if !ok {
-		w.WriteHeader(http.NotFound);
+		w.WriteHeader(http.StatusNotFound);
 		return;
 	}
 
 	w.WriteHeader(http.StatusTemporaryRedirect);
-	w.Write(link);
+	w.Write([]byte(link));
 }
