@@ -19,7 +19,7 @@ func run() error {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(`POST /`, createHandler)
-	mux.HandleFunc(`GET /{id}`, getByIdHandler)
+	mux.HandleFunc(`GET /{id}`, getByIDHandler)
 
 	return http.ListenAndServe(`:8080`, mux)
 }
@@ -65,7 +65,7 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getByIdHandler(w http.ResponseWriter, r *http.Request) {
+func getByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 	var id = r.PathValue(`id`)
 
