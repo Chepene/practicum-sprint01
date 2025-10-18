@@ -3,12 +3,9 @@ package handler
 import (
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/Chepene/practicum-sprint01/internal/service"
 )
-
-var links = make(map[string]string)
 
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -17,11 +14,14 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	targetLink, err := service.CreateShortLink(string(body))
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
@@ -32,19 +32,15 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetByIDHandler(w http.ResponseWriter, r *http.Request) {
 
-	var id = r.PathValue(`id`)
+	shortLink := r.PathValue(`id`)
 
-	var link, ok = links[id]
-	if !ok {
+	originalLink, err := service.GetOriginalLink(shortLink)
+
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	// Добавляем протокол, если его нет
-	if !strings.HasPrefix(link, "http://") && !strings.HasPrefix(link, "https://") {
-		link = "http://" + link
-	}
-
-	w.Header().Add(`Location`, link)
+	w.Header().Add(`Location`, originalLink)
 	w.WriteHeader(http.StatusTemporaryRedirect)
 }

@@ -2,8 +2,6 @@ package repository
 
 import "errors"
 
-var baseUrl = "http://localhost:8080"
-
 var links = make(map[string]string)
 
 var AlreadyExistsError = errors.New("Такой элемент уже есть")
@@ -17,4 +15,12 @@ func SaveShortLink(originalLink string, targetLink string) error {
 	links[targetLink] = originalLink
 
 	return nil
+}
+
+func GetOriginalLink(shortLink string) (string, error) {
+	originalLink, ok := links[shortLink]
+	if !ok {
+		return "", errors.New("Ссылка не найдена")
+	}
+	return originalLink, nil
 }

@@ -7,15 +7,19 @@ var baseUrl = "http://localhost:8080/"
 func CreateShortLink(originalLink string) (string, error) {
 	for {
 		id := RandomString(8)
-		targetLink := baseUrl + id
-		if err := repository.SaveShortLink(originalLink, targetLink); err != nil {
+		if err := repository.SaveShortLink(originalLink, id); err != nil {
 			if err == repository.AlreadyExistsError {
 				continue
 			} else {
 				return "", err
 			}
 		} else {
+			targetLink := baseUrl + id
 			return targetLink, nil
 		}
 	}
+}
+
+func GetOriginalLink(shortLink string) (string, error) {
+	return repository.GetOriginalLink(shortLink)
 }
