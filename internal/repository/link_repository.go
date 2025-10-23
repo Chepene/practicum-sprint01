@@ -1,26 +1,30 @@
 package repository
 
-import "errors"
+type InMemoryLinkRepository struct {
+	links map[string]string
+}
 
-var links = make(map[string]string)
+func NewInMemoryLinkRepository() *InMemoryLinkRepository {
+	return &InMemoryLinkRepository{
+		links: make(map[string]string),
+	}
+}
 
-var AlreadyExistsError = errors.New("Такой элемент уже есть")
+func (r *InMemoryLinkRepository) Save(originalLink string, targetLink string) error {
 
-func SaveShortLink(originalLink string, targetLink string) error {
-
-	if _, ok := links[targetLink]; ok {
-		return AlreadyExistsError
+	if _, ok := r.links[targetLink]; ok {
+		return ErrAlreadyExists
 	}
 
-	links[targetLink] = originalLink
+	r.links[targetLink] = originalLink
 
 	return nil
 }
 
-func GetOriginalLink(shortLink string) (string, error) {
-	originalLink, ok := links[shortLink]
+func (r *InMemoryLinkRepository) GetOriginalLink(shortLink string) (string, error) {
+	originalLink, ok := r.links[shortLink]
 	if !ok {
-		return "", errors.New("Ссылка не найдена")
+		return "", ErrNotFound
 	}
 	return originalLink, nil
 }

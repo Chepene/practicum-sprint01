@@ -2,24 +2,37 @@ package service
 
 import "github.com/Chepene/practicum-sprint01/internal/repository"
 
-var baseUrl = "http://localhost:8080/"
+type ShortenerService interface {
+	CreateShortLink(originalLink string) (string, error)
+	GetOriginalLink(shortLink string) (string, error)
+}
 
-func CreateShortLink(originalLink string) (string, error) {
+type ShortenerServiceImpl struct {
+	repo    repository.LinkRepository
+	baseURL string
+}
+
+func NewShortenerService(repo repository.LinkRepository, baseURL string) *ShortenerServiceImpl {
+	return &ShortenerServiceImpl{
+		repo:    repo,
+		baseURL: baseURL,
+	}
+}
+
+func (s *ShortenerServiceImpl) CreateShortLink(originalLink string) (string, error) {
 	for {
 		id := RandomString(8)
-		if err := repository.SaveShortLink(originalLink, id); err != nil {
-			if err == repository.AlreadyExistsError {
-				continue
-			} else {
+		if err := s.repo.Save(originalLink, id); err != nil {
+			if err != repository.ErrAlreadyExists {
 				return "", err
 			}
 		} else {
-			targetLink := baseUrl + id
+			targetLink := s.baseURL + id
 			return targetLink, nil
 		}
 	}
 }
 
-func GetOriginalLink(shortLink string) (string, error) {
-	return repository.GetOriginalLink(shortLink)
+func (s *ShortenerServiceImpl) GetOriginalLink(shortLink string) (string, error) {
+	return s.repo.GetOriginalLink(shortLink)
 }
