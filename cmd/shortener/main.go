@@ -19,8 +19,10 @@ func run() error {
 
 	repo := repository.NewInMemoryLinkRepository()
 
-	baseUrl := "http://localhost:8080/"
-	service := service.NewShortenerService(repo, baseUrl)
+	g := service.NewRandomGenerator()
+
+	baseUrl := "http://localhost:8082/"
+	service := service.NewShortenerService(repo, g, baseUrl)
 
 	handler := handler.NewHandler(service)
 
@@ -28,5 +30,5 @@ func run() error {
 	mux.HandleFunc(`POST /`, handler.CreateHandler)
 	mux.HandleFunc(`GET /{id}`, handler.GetByIDHandler)
 
-	return http.ListenAndServe(`:8080`, mux)
+	return http.ListenAndServe(`:8082`, mux)
 }

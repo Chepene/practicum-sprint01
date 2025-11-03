@@ -5,14 +5,29 @@ import (
 	"time"
 )
 
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var baseLetters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-var r = rand.New(rand.NewSource(time.Now().UnixNano()))
+type StringGenerator interface {
+	Generate(len int) string
+}
 
-func RandomString(n int) string {
-	var b = make([]rune, n)
+type StringGeneratorImpl struct {
+	rnd     *rand.Rand
+	letters []rune
+}
+
+func NewRandomGenerator() *StringGeneratorImpl {
+
+	return &StringGeneratorImpl{
+		rnd:     rand.New(rand.NewSource(time.Now().UnixNano())),
+		letters: baseLetters,
+	}
+}
+
+func (g *StringGeneratorImpl) Generate(l int) string {
+	var b = make([]rune, l)
 	for i := range b {
-		b[i] = letters[r.Intn(len(letters))]
+		b[i] = g.letters[g.rnd.Intn(len(g.letters))]
 	}
 	return string(b)
 }

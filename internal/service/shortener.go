@@ -9,19 +9,22 @@ type ShortenerService interface {
 
 type ShortenerServiceImpl struct {
 	repo    repository.LinkRepository
+	g       StringGenerator
 	baseURL string
 }
 
-func NewShortenerService(repo repository.LinkRepository, baseURL string) *ShortenerServiceImpl {
+func NewShortenerService(repo repository.LinkRepository, g StringGenerator, baseURL string) *ShortenerServiceImpl {
 	return &ShortenerServiceImpl{
 		repo:    repo,
+		g:       g,
 		baseURL: baseURL,
 	}
 }
 
 func (s *ShortenerServiceImpl) CreateShortLink(originalLink string) (string, error) {
 	for {
-		id := RandomString(8)
+		len := 8
+		id := s.g.Generate(len)
 		if err := s.repo.Save(originalLink, id); err != nil {
 			if err != repository.ErrAlreadyExists {
 				return "", err
