@@ -1,6 +1,9 @@
 package repository
 
+import "sync"
+
 type InMemoryLinkRepository struct {
+	mu    sync.RWMutex
 	links map[string]string
 }
 
@@ -11,6 +14,8 @@ func NewInMemoryLinkRepository() *InMemoryLinkRepository {
 }
 
 func (r *InMemoryLinkRepository) Save(originalLink string, targetLink string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 
 	if _, ok := r.links[targetLink]; ok {
 		return ErrAlreadyExists
@@ -22,6 +27,9 @@ func (r *InMemoryLinkRepository) Save(originalLink string, targetLink string) er
 }
 
 func (r *InMemoryLinkRepository) GetOriginalLink(shortLink string) (string, error) {
+	r.mu.Lock()
+	r.mu.Unlock()
+
 	originalLink, ok := r.links[shortLink]
 	if !ok {
 		return "", ErrNotFound

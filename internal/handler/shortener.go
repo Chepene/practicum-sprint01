@@ -18,9 +18,9 @@ func NewHandler(svc service.ShortenerService) *Handler {
 }
 
 func (h *Handler) CreateHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 
 	body, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

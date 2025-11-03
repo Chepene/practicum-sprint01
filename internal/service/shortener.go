@@ -1,6 +1,9 @@
 package service
 
-import "github.com/Chepene/practicum-sprint01/internal/repository"
+import (
+	"github.com/Chepene/practicum-sprint01/internal/pkg"
+	"github.com/Chepene/practicum-sprint01/internal/repository"
+)
 
 type ShortenerService interface {
 	CreateShortLink(originalLink string) (string, error)
@@ -9,11 +12,11 @@ type ShortenerService interface {
 
 type ShortenerServiceImpl struct {
 	repo    repository.LinkRepository
-	g       StringGenerator
+	g       pkg.StringGenerator
 	baseURL string
 }
 
-func NewShortenerService(repo repository.LinkRepository, g StringGenerator, baseURL string) *ShortenerServiceImpl {
+func NewShortenerService(repo repository.LinkRepository, g pkg.StringGenerator, baseURL string) *ShortenerServiceImpl {
 	return &ShortenerServiceImpl{
 		repo:    repo,
 		g:       g,
