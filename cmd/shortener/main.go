@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Chepene/practicum-sprint01/internal/handler"
+	"github.com/Chepene/practicum-sprint01/internal/pkg"
 	"github.com/Chepene/practicum-sprint01/internal/repository"
 	"github.com/Chepene/practicum-sprint01/internal/service"
 )
@@ -19,7 +20,7 @@ func run() error {
 
 	repo := repository.NewInMemoryLinkRepository()
 
-	g := service.NewRandomGenerator()
+	g := pkg.NewRandomGenerator()
 
 	baseUrl := "http://localhost:8082/"
 	service := service.NewShortenerService(repo, g, baseUrl)
