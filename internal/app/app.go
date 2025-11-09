@@ -11,7 +11,7 @@ import (
 
 type App struct {
 	Mux     *http.ServeMux
-	Handler *handler.Handler
+	Handler *handler.ShortenerHandler
 }
 
 func NewApp() (*App, error) {
@@ -23,7 +23,7 @@ func NewApp() (*App, error) {
 	baseUrl := "http://localhost:8080/"
 	service := service.NewShortenerService(repo, g, baseUrl)
 
-	handler := handler.NewHandler(service)
+	handler := handler.NewShortenerHandler(service)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(`POST /`, handler.CreateHandler)

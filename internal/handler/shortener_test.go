@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestStatusHandler(t *testing.T) {
+func TestShortenerHandler(t *testing.T) {
 	type want struct {
 		code        int
 		response    string
@@ -48,13 +49,13 @@ func TestStatusHandler(t *testing.T) {
 
 			assert.Equal(t, test.want.code, res.StatusCode)
 
-			// defer res.Body.Close()
+			defer res.Body.Close()
 
-			// _, err := io.ReadAll(res.Body)
+			resBody, err := io.ReadAll(res.Body)
+			require.NoError(t, err)
+			responseStr := string(resBody)
 
-			// require.NoError(t, err)
-			//assert.JSONEq(t, test.want.response, string(resBody))
-			//assert.Equal(t, test.want.contentType, res.Header.Get("Content-Type"))
+			assert.True(t, strings.HasPrefix(responseStr, "http://localhost:8080/"))
 		})
 	}
 }

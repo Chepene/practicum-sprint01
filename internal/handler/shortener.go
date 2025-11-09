@@ -7,17 +7,17 @@ import (
 	"github.com/Chepene/practicum-sprint01/internal/service"
 )
 
-type Handler struct {
+type ShortenerHandler struct {
 	service service.ShortenerService
 }
 
-func NewHandler(svc service.ShortenerService) *Handler {
-	return &Handler{
+func NewShortenerHandler(svc service.ShortenerService) *ShortenerHandler {
+	return &ShortenerHandler{
 		service: svc,
 	}
 }
 
-func (h *Handler) CreateHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ShortenerHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	body, err := io.ReadAll(r.Body)
@@ -40,7 +40,7 @@ func (h *Handler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) GetByIDHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ShortenerHandler) GetByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 	shortLink := r.PathValue(`id`)
 
