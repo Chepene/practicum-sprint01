@@ -3,10 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/Chepene/practicum-sprint01/internal/handler"
-	"github.com/Chepene/practicum-sprint01/internal/pkg"
-	"github.com/Chepene/practicum-sprint01/internal/repository"
-	"github.com/Chepene/practicum-sprint01/internal/service"
+	"github.com/Chepene/practicum-sprint01/internal/app"
 )
 
 func main() {
@@ -18,18 +15,11 @@ func main() {
 
 func run() error {
 
-	repo := repository.NewInMemoryLinkRepository()
+	app, err := app.NewApp()
 
-	g := pkg.NewRandomGenerator()
+	if err != nil {
+		return err
+	}
 
-	baseUrl := "http://localhost:8080/"
-	service := service.NewShortenerService(repo, g, baseUrl)
-
-	handler := handler.NewHandler(service)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc(`POST /`, handler.CreateHandler)
-	mux.HandleFunc(`GET /{id}`, handler.GetByIDHandler)
-
-	return http.ListenAndServe(`:8080`, mux)
+	return http.ListenAndServe(`:8080`, app.Mux)
 }
